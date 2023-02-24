@@ -1,0 +1,43 @@
+DOCKER
+1 	Créer une image docker  "node-api" :
+		- Adapter les variables d'environnement dans le .env du dossier "nodejs-example"
+		- Créer le Dockerfile dans le dossier "nodejs-example"
+		- Commande : docker build . -t nelahio/node-api:1.0
+		- Commande : docker run -d --name node-api --env-file=.env nelahio/node-api:1.0
+2 	Conteneur PostgreSQL :
+		- 
+		- 
+3	Connecter l'API et la base de données :
+		- Créer un network : commande : docker network create node-network
+		- Connecter l'API : commande : docker run -d --name node-api --env-file=.env  --network node-network nelahio/node-api:1.0
+		- Connecter la base de données : commande : docker network connect node-network postgres-db
+		- Vérifier : commande : docker network inspect node-network
+4	Versionner l'image avec DockerHub :
+		- Se connecter à DockerHub : commande : docker login
+		- Pousser l'image sur DockerHub : docker push nelahio/node-api:1.0
+KUBERNETES
+5	Créer un dossier "kubernetes" à la racine 
+6 	Créer les dossiers "api" et "postgres" dans le dossier "kubernetes"
+7	Créer les fichiers de configuration de l'API en yaml dans "api"
+		- Créer le service "api-service.yaml" avec les bons ports pour la communication avec la base de données
+		- Créer le fichier de déploiement "api-deployment.yaml" avec le bon port et les variables d'environnement 
+		- Créer le fichier "api-configmap.yaml" pour stocker les variables d'environnement non sensibles comme le nom de la base de données et de la table
+		- Créer le fichier "api-secrets.yaml" pour stocker les variables d'environnement sensible comme le nom d'utilisateur et le mot de passe de connection à la base de données
+8	Créer les fichiers de configuration de PostgreSQL en yaml dans "postgres"
+		- Créer le service "postgres-service.yaml" avec les bons ports pour communiquer avec l'api
+		- Créer le fichier de déploiement "postgres-deployment.yaml" avec le bon port, les variables d'environnement et les volumes pour persister les données de la base de données
+		- Créer le fichier "postgres-configmap.yaml" pour stocker les variables d'environnement non sensibles comme le nom de la base de données, de la table et le dialect
+		- Créer le fichier "postgres-secrets.yaml" pour stocker les varaibles d'environnement sensible comme le nom d'utilisateur et le mot de passe de connection à la base de données
+(notes : je n'ai fait que des secrets car, pour une raison inconnue, mes variables dans mon configMap n'étaient pas prises en compte, fonctionne uniquement avec des secrets)
+9	Déployer sur Kubernetes les briques applicatives
+		- Déployer postgres : commande : kubectl apply -f .\postgres\ -n pubsub-node
+		- Déployer api : commande : kubectl apply -f .\api\ -n pubsub-node
+10 	Scaling automatique de l'API
+		- Créer le fichier "hpa.yaml" dans le dossier "api"
+11 	Exposer les briques applicatives sur un réseau publique
+		- Créer un fichier "api-ingress.yaml" dans le dossier "api"
+12 	Gestion de plusieurs environnements
+		- Création d'une structure de fichiers pour les dossiers "api" et "postgres" avec les fichiers à surcharger dans "dev":
+			- ./base/
+			- ./overlays/dev 
+		- Déployer : commande : kubectl apply -k .\overlays\dev -n pubsub-node

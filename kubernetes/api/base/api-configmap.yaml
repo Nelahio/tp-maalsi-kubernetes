@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api
+data:
+  postgres_db: "postgres-db"
+  db_hostname: "postgres"
+  db_dialect: "postgres"

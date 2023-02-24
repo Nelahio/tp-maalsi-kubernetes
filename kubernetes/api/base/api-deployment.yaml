@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: nelahio/node-api:1.0
+        env:
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                key: postgres_db
+                name: api
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                
+                key: db_username
+                name: api
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: db_password
+                name: api
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                key: db_hostname
+                name: api 
+          - name: DB_DAILECT
+            valueFrom:
+              configMapKeyRef:
+                key: db_dialect
+                name: api
+        ports:
+          - containerPort: 3000
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+      restartPolicy: Always
