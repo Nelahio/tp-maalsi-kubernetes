@@ -5,8 +5,7 @@ DOCKER
 		- Commande : docker build . -t nelahio/node-api:1.0
 		- Commande : docker run -d --name node-api --env-file=.env nelahio/node-api:1.0
 2 	Conteneur PostgreSQL :
-		- 
-		- 
+		- Commande : docker run --name postgres-db -e POSTGRES_PASSWORD= -p 5432:5432 -d postgres
 3	Connecter l'API et la base de données :
 		- Créer un network : commande : docker network create node-network
 		- Connecter l'API : commande : docker run -d --name node-api --env-file=.env  --network node-network nelahio/node-api:1.0
